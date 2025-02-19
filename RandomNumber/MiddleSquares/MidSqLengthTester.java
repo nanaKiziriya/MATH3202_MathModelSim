@@ -22,7 +22,7 @@ class Main {
         boolean printSequ = false;
         int firstRoot=0, halfSeedLength=1;
 
-        lastRoot = Math.pow(10,2*halfSeedLength)-1
+        int lastRoot = (int)Math.pow(10,2*halfSeedLength)-1;
         
         // Containers
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
