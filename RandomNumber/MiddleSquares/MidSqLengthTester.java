@@ -9,16 +9,16 @@ class Main {
         int j=1, tailLength=0, maxTailLength=1;
         for(int i=1;i<=100;i++){
             while(true){
-                System.out.print(j+" ");
                 if(!(cycleChecker.contains(j)||sequAdd.keySet().contains(j))){
+                    System.out.print(j+" ");
                     cycleChecker.add(j);
                     tailLength++;
                 } else break;
                 j=fnct(j);
             }
             System.out.println("["+tailLength+"]");
-            if(!sequAdd.keySet().contains(tailLength)){
-                sequAdd.put(tailLength,new TreeSet<Integer>);
+            if(!(sequAdd.keySet().contains(tailLength))){
+                sequAdd.put(tailLength,new TreeSet<Integer>());
             }
             sequAdd.get(tailLength).add(i);
             maxTailLength=(maxTailLength<tailLength)?tailLength:maxTailLength;
