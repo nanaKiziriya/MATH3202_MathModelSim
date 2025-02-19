@@ -1,11 +1,15 @@
-class MidSqLengthTester {
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.TreeSet;
+
+class Main {
     public static void main(String[] args) {
         HashMap<Integer,TreeSet<Integer>> sequAdd = new HashMap<>();
         HashSet<Integer> cycleChecker = new HashSet<>();
-        int j=1, tailLength=0;
+        int j=1, tailLength=0, maxTailLength=1;
         for(int i=1;i<=100;i++){
             while(true){
-                System.out.print(j+" ")
+                System.out.print(j+" ");
                 if(!(cycleChecker.contains(j)||sequAdd.keySet().contains(j))){
                     cycleChecker.add(j);
                     tailLength++;
@@ -13,6 +17,9 @@ class MidSqLengthTester {
                 j=fnct(j);
             }
             System.out.println("["+tailLength+"]");
+            if(!sequAdd.keySet().contains(tailLength)){
+                sequAdd.put(tailLength,new TreeSet<Integer>);
+            }
             sequAdd.get(tailLength).add(i);
             maxTailLength=(maxTailLength<tailLength)?tailLength:maxTailLength;
             j=i; tailLength=0;
@@ -26,7 +33,7 @@ class MidSqLengthTester {
     }
     
     public static int fnct(int n){
-        String s = String.format(%4d,n*n);
+        String s = String.format("%04d",n*n);
         s=s.substring(1,3);
         return Integer.parseInt(s);
     }
