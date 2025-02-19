@@ -8,7 +8,7 @@ class Main {
         
         // USER INPUTS
         boolean printSequ = false;
-        int firstRoot=1, lastRoot=99;
+        int firstRoot=0, lastRoot=99;
         
         // Containers
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
@@ -21,6 +21,11 @@ class Main {
         
         // efficient calc for each root
         for(int i=firstRoot, j=i;i<=lastRoot;i++){
+            // reset vals/prep for next root
+            j=i; tailLength=0; tempIndex=0;
+            cycleChecker.clear();
+            cycleHolder.clear();
+            
             while(true){ // for each root, continues sequ calc until hits repeat in either root's cycleChecker or rootChecker
                 if(!(cycleChecker.contains(j)||seedTail.keySet().contains(j))){
                     if(printSequ) System.out.print(j+" ");
@@ -51,11 +56,6 @@ class Main {
             
             // update maxTailLength
             if(maxTailLength<tailLength) maxTailLength=tailLength;
-            
-            // reset vals/prep for next root
-            j=i; tailLength=0; tempIndex=0;
-            cycleChecker.clear();
-            cycleHolder.clear();
         }
         
         // Print final information
