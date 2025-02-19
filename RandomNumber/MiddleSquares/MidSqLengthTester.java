@@ -6,15 +6,20 @@ import java.util.ArrayList;
 class Main {
     public static void main(String[] args) {
         
+        // USER INPUTS
         boolean printSequ = false;
         int firstRoot=1, lastRoot=99;
         
+        // Containers
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
         HashMap<Integer,Integer> seedTail = New HashMap<>(); // <seed,tailLength>, keySet() holds all previous elements to avoid unnecessary repeats
         ArrayList<Integer> cycleHolder = new ArrayList<>(); // reset empty per seed, holds cycle in order
         HashSet<Integer> cycleChecker = new HashSet<Integer>(); // reset empty per seed, for quickly checking cycle
         int tailLength=0, maxTailLength=1;
+        int tempTail=0, tempIndex=0; // works with tempSeed, faster
         
+        
+        // efficient calc for each root
         for(int i=j=firstRoot;i<=lastRoot;i++){
             while(true){ // for each root, continues sequ calc until hits repeat in either root's cycleChecker or rootChecker
                 if(!(cycleChecker.contains(j)||seedTail.keySet().contains(j))){
@@ -30,14 +35,31 @@ class Main {
                 j=fnct(j);
             }
             // while loop break guaranteed
+            
             if(printSequ) System.out.println("["+tailLength+"]");
+            
+            // update tailSeed, seedTail, time efficient
+            for(int tempSeed:cycleHolder){
+                if(!seedTail.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
+                    tempTail = tailLength-tempIndex;
+                    seedTail.put(tempSeed,tempTail);
+                    tailSeed.get(tempTail).add(tempSeed);
+                }
+                tempIndex++;
+            }
+            
             if(!(tailSeed.keySet().contains(tailLength))){
                 tailSeed.put(tailLength,new TreeSet<Integer>());
             }
             tailSeed.get(tailLength).add(i);
-            maxTailLength=(maxTailLength<tailLength)?tailLength:maxTailLength;
-            j=i; tailLength=0;
+            
+            // update maxTailLength
+            if(maxTailLength<tailLength) maxTailLength=tailLength;
+            
+            // reset vals/prep for next root
+            j=i; tailLength=0; tempIndex=0;
             cycleChecker.clear();
+            cycleHolder.clear();
         }
         System.out.println("Largest tail length is "+maxTailLength);
         System.out.print("With seed(s): ");
