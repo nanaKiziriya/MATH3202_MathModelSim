@@ -1,3 +1,15 @@
+/*
+OVERVIEW:
+For Middle-Square method of generating pseudo-random numbers
+Calculates for each initial value (seed) the length of its non-cyclic sequence (tail) -> seed, tailLength, maxTailLength
+Keeps track of seed & tailLength in both directions -> seedTail, tailSeed
+This program priorities TIME efficiency over space efficiency
+
+USER INPUTS starting at line 21 -> printSequ, firstRoot, halfSeedLength
+halfSeedLength - controls upper limit for length of the elements; Note: for middle-square, length must be even, thus HALF seed length is an integer
+
+*/
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -8,15 +20,17 @@ class Main {
         
         // USER INPUTS
         boolean printSequ = false;
-        int firstRoot=0, lastRoot=99;
+        int firstRoot=0, halfSeedLength=1;
+
+        lastRoot = Math.pow(10,2*halfSeedLength)-1
         
         // Containers
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
-        HashMap<Integer,Integer> seedTail = new HashMap<>(); // <seed,tailLength>, keySet() holds all previous elements to avoid unnecessary repeats
-        ArrayList<Integer> cycleHolder = new ArrayList<>(); // reset empty per seed, holds cycle in order
+        HashMap<Integer,Integer> seedTail = new HashMap<>(); // <seed,tailLength>, keySet() holds all previous elements, helps avoid unnecessary repeats
+        ArrayList<Integer> cycleHolder = new ArrayList<>(); // reset empty per seed, holds cycle in order, helps calc seed-tailL pair quicker
         HashSet<Integer> cycleChecker = new HashSet<Integer>(); // reset empty per seed, for quickly checking cycle
-        int tailLength=0, maxTailLength=1;
-        int tempTail=0, tempIndex=0; // works with tempSeed, faster
+        int tailLength=0, maxTailLength=0;
+        int tempTail=0, tempIndex=0; // works with tempSeed, tempIndex instead of ArrayList.indexOf() for time efficiency
         
         
         // efficient calc for each root
