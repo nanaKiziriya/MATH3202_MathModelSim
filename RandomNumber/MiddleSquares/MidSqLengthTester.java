@@ -1,9 +1,3 @@
-/*
-Calculates for Middle-Square method which seeds produce the longest non-cyclic path, referred to as a "tail" (cycle is guaranteed after)
-This program prioritizes time efficiency over space efficiency
-USER INPUTS starting at line 15
-*/
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -55,11 +49,6 @@ class Main {
                 tempIndex++;
             }
             
-            if(!(tailSeed.keySet().contains(tailLength))){
-                tailSeed.put(tailLength,new TreeSet<Integer>());
-            }
-            tailSeed.get(tailLength).add(i);
-            
             // update maxTailLength
             if(maxTailLength<tailLength) maxTailLength=tailLength;
             
@@ -68,11 +57,14 @@ class Main {
             cycleChecker.clear();
             cycleHolder.clear();
         }
+        
+        // Print final information
         System.out.println("Largest tail length is "+maxTailLength);
         System.out.print("With seed(s): ");
         for(int n:tailSeed.get(maxTailLength)){
-            System.out.print(n+", ");
+            System.out.print(n+" ");
         }
+        
     }
     
     public static int fnct(int n){ // works good
