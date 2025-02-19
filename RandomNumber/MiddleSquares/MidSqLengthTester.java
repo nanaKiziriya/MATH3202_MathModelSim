@@ -1,3 +1,9 @@
+/*
+Calculates for Middle-Square method which seeds produce the longest non-cyclic path, referred to as a "tail" (cycle is guaranteed after)
+This program prioritizes time efficiency over space efficiency
+USER INPUTS starting at line 15
+*/
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -12,7 +18,7 @@ class Main {
         
         // Containers
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
-        HashMap<Integer,Integer> seedTail = New HashMap<>(); // <seed,tailLength>, keySet() holds all previous elements to avoid unnecessary repeats
+        HashMap<Integer,Integer> seedTail = new HashMap<>(); // <seed,tailLength>, keySet() holds all previous elements to avoid unnecessary repeats
         ArrayList<Integer> cycleHolder = new ArrayList<>(); // reset empty per seed, holds cycle in order
         HashSet<Integer> cycleChecker = new HashSet<Integer>(); // reset empty per seed, for quickly checking cycle
         int tailLength=0, maxTailLength=1;
@@ -20,7 +26,7 @@ class Main {
         
         
         // efficient calc for each root
-        for(int i=j=firstRoot;i<=lastRoot;i++){
+        for(int i=firstRoot, j=i;i<=lastRoot;i++){
             while(true){ // for each root, continues sequ calc until hits repeat in either root's cycleChecker or rootChecker
                 if(!(cycleChecker.contains(j)||seedTail.keySet().contains(j))){
                     if(printSequ) System.out.print(j+" ");
@@ -43,6 +49,7 @@ class Main {
                 if(!seedTail.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
                     tempTail = tailLength-tempIndex;
                     seedTail.put(tempSeed,tempTail);
+                    if(!tailSeed.keySet().contains(tempTail)) tailSeed.put(tempTail,new TreeSet<>());
                     tailSeed.get(tempTail).add(tempSeed);
                 }
                 tempIndex++;
