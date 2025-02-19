@@ -19,8 +19,11 @@ class Main {
     public static void main(String[] args) {
         
         // USER INPUTS
-        boolean printSequ = false;
         int firstRoot=0, halfSeedLength=1;
+        boolean printTailOfEachSeed = false; // during calculations
+        boolean printSeedsOfMaxTailL = true; // after calculations
+        boolean printTailLOfEachSeed = false; // after calculations
+        
 
         int lastRoot = (int)Math.pow(10,2*halfSeedLength)-1;
         
@@ -42,20 +45,23 @@ class Main {
             
             while(true){ // for each root, continues sequ calc until hits repeat in either root's cycleChecker or rootChecker
                 if(!(cycleChecker.contains(j)||seedTail.keySet().contains(j))){
-                    if(printSequ) System.out.print(j+" ");
+                    /*printTailOfEachSeed*/
+                    if(printTailOfEachSeed) System.out.print(j+" ");
                     cycleChecker.add(j);
                     cycleHolder.add(j);
                     tailLength++;
                 } else{
                     if(seedTail.keySet().contains(j)) tailLength+=seedTail.get(j);
-                    if(printSequ) System.out.print(j+"... ");
+                    /*printTailOfEachSeed*/
+                    if(printTailOfEachSeed) System.out.print(j+"... ");
                     break; // break this root sequ
                 }
                 j=fnct(j);
             }
             // while loop break guaranteed
             
-            if(printSequ) System.out.println("["+tailLength+"]");
+            /*printTailOfEachSeed*/
+            if(printTailOfEachSeed) System.out.println("["+tailLength+"]");
             
             // update tailSeed, seedTail, time efficient
             for(int tempSeed:cycleHolder){
@@ -72,12 +78,28 @@ class Main {
             if(maxTailLength<tailLength) maxTailLength=tailLength;
         }
         
+        // END
+        
         // Print final information
         System.out.println("Largest tail length is "+maxTailLength);
-        System.out.print("With seed(s): ");
-        for(int n:tailSeed.get(maxTailLength)){
-            System.out.print(n+" ");
+        
+        /*printSeedsOfMaxTailL*/
+        if(printSeedsOfMaxTailL){
+            System.out.println("With seed(s): ");
+            for(int n:tailSeed.get(maxTailLength)){
+                System.out.print(n+" ");
+            }
+            System.out.println();
         }
+        
+        /*printTailLOfEachSeed*/
+        if(printTailLOfEachSeed){
+            System.out.println("All tail lengths in order:");
+            for(int i=firstRoot;i<=lastRoot;i++){
+                System.out.print(seedTail.get(i)+" ");
+            }
+        }
+        
         
     }
     
