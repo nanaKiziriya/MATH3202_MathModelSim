@@ -4,19 +4,26 @@ import java.util.TreeSet;
 
 class Main {
     public static void main(String[] args) {
+        
+        boolean printSequ = false;
+        
+        
         HashMap<Integer,TreeSet<Integer>> sequAdd = new HashMap<>();
         HashSet<Integer> cycleChecker = new HashSet<>();
         int j=1, tailLength=0, maxTailLength=1;
         for(int i=1;i<=100;i++){
             while(true){
                 if(!(cycleChecker.contains(j)||sequAdd.keySet().contains(j))){
-                    System.out.print(j+" ");
+                    if(printSequ) System.out.print(j+" ");
                     cycleChecker.add(j);
                     tailLength++;
-                } else break;
+                } else{
+                    if(sequAdd.keySet().contains(j))tailLength+=sequAdd.get(j).size();
+                    break;
+                }
                 j=fnct(j);
             }
-            System.out.println("["+tailLength+"]");
+            if(printSequ) System.out.println("["+tailLength+"]");
             if(!(sequAdd.keySet().contains(tailLength))){
                 sequAdd.put(tailLength,new TreeSet<Integer>());
             }
