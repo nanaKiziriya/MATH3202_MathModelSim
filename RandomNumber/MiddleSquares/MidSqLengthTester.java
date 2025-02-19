@@ -5,8 +5,8 @@ Calculates for each initial value (seed) the length of its non-cyclic sequence (
 Keeps track of seed & tailLength in both directions -> seedTail, tailSeed
 This program priorities TIME efficiency over space efficiency
 
-USER INPUTS starting at line 21 -> printSequ, firstRoot, halfSeedLength
-halfSeedLength - controls upper limit for length of the elements; Note: for middle-square, length must be even, thus HALF seed length is an integer
+USER INPUTS starting at line 20 -> printSequ, firstRoot, seedLength, (print booleans)
+seedLength - controls upper limit for length of the elements; Note: for middle-square, odd-lengths favor the left side of the middle
 
 */
 
@@ -16,16 +16,16 @@ import java.util.TreeSet;
 import java.util.ArrayList;
 
 class Main {
+    
+    // USER INPUTS
+    static int firstRoot=0, seedLength=2;
+    static boolean printTailOfEachSeed = false; // during calculations
+    static boolean printSeedsOfMaxTailL = true; // after calculations
+    static boolean printTailLOfEachSeed = false; // after calculations
+    
     public static void main(String[] args) {
-        
-        // USER INPUTS
-        int firstRoot=0, halfSeedLength=1;
-        boolean printTailOfEachSeed = false; // during calculations
-        boolean printSeedsOfMaxTailL = true; // after calculations
-        boolean printTailLOfEachSeed = false; // after calculations
-        
 
-        int lastRoot = (int)Math.pow(10,2*halfSeedLength)-1;
+        int lastRoot = (int)Math.pow(10,seedLength)-1;
         
         // Containers
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
@@ -103,10 +103,16 @@ class Main {
         
     }
     
-    public static int fnct(int n){ // works good
-        String s = String.format("%04d",n*n);
-        s=s.substring(1,3);
-        n=Integer.parseInt(s);
+    public static int fnct(int n){
+        
+        int squareLength = 2*seedLength;
+        StringBuilder s = new StringBuilder(""+n*n);
+        while(s.length()<squareLength){
+            s.insert(0,"0");
+        }
+        
+        int startIndex = (seedLength+1)/2;
+        n=Integer.parseInt(s.substring(startIndex,startIndex+seedLength));
         return n;
     }
 }
