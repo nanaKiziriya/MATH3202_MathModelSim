@@ -7,7 +7,7 @@ For each seed, it iterates through the orbit and calculates important info. Afte
 Terminology:
 seed - the initial value of a sequence
 tail - the longest acyclic sequence of the orbit
-tip - longest sequence before a periodic point is hit (strictly shorter than tail)
+tip - num. iterations until periodic point, or equivalently, longest sequence excluding periodic points (strictly shorter than tail)
 
 This program:
 Calculates the tail length of each seed
@@ -31,6 +31,7 @@ import java.util.ArrayList;
 class MidSqTester {
     
     // USER INPUTS
+        // Seeds to iterate over
         static int firstSeed=0, seedLength=3;
         static int lastSeed =
             (int)Math.pow(10,seedLength)-1; // Automatically calculates largest seed of given length
@@ -39,11 +40,12 @@ class MidSqTester {
         // During/after each orbit:
         static boolean printOrbitInfoOfEachSeed = false;
         // At very end:
-        static boolean printMaxTailLength = true;
+        static int printL = 20; // for PrintAllTail/Tip
+        static boolean printAllUniqueCycles = true;
+        static boolean printMaxTailLength = false;
         static boolean printAllTailLengths = false;
         static boolean printMaxTipLength = true;
-        static boolean printAllTipLengths = false;
-        static boolean printAllUniqueCycles = true;
+        static boolean printAllTipLengths = true;
     // END OF USER INPUTS
     
     public static void main(String[] args) {
@@ -76,7 +78,7 @@ class MidSqTester {
             System.out.println("Terminology:");
             System.out.println("seed - the initial value of a sequence");
             System.out.println("tail - the longest acyclic sequence of the orbit");
-            System.out.println("tip - longest sequence before a periodic point is hit (strictly shorter than tail)");
+            System.out.println("tip - num. iterations until periodic point, or equivalently, longest sequence excluding periodic points (strictly shorter than tail)");
             System.out.println();
         }
 
@@ -185,7 +187,16 @@ class MidSqTester {
         // END OF ALL LOOPING
         
         // Print final information: Cycle,Tip,Tail Info
-
+        
+        /*printAllUniqueCycles, DONE*/
+        if(printAllUniqueCycles){
+            System.out.println("\nAll unique cycles:");
+            for(ArrayList c:uniqueCycles){
+                System.out.printf("%s (pd=%d)\n",c.toString(),seedInfo.get(c.get(0)).get(0));
+            }
+            System.out.println();
+        }
+        
         /*printMaxTailLength, START/DONE*/
         if(printMaxTailLength){
             System.out.printf("Largest tail length is %d with seed(s): ",maxTailLength);
@@ -197,9 +208,10 @@ class MidSqTester {
         
         /*printAllTailLengths, START/DONE*/
         if(printAllTailLengths){
-            System.out.println("All tail lengths in order:");
+            System.out.print("Tail lengths in order:");
             for(int i=firstSeed;i<=lastSeed;i++){
-                System.out.print(seedInfo.get(i).get(1)+" ");
+                if(i%printL==firstSeed) System.out.printf("\n(%d-%d) ",i,i+printL);
+                System.out.printf("%d ",seedInfo.get(i).get(1));
             }
             System.out.println();
         }
@@ -215,21 +227,14 @@ class MidSqTester {
         
         /*printAllTipLengths, START/DONE*/
         if(printAllTipLengths){
-            System.out.println("All tip lengths in order:");
+            System.out.print("Tip lengths in order:");
             for(int i=firstSeed;i<=lastSeed;i++){
-                System.out.print(seedInfo.get(i).get(2)+" ");
+                if(i%printL==firstSeed) System.out.printf("\n(%d-%d) ",i,i+printL);
+                System.out.printf("%d ",seedInfo.get(i).get(2));
             }
             System.out.println();
         }
 
-        /*printAllUniqueCycles, DONE*/
-        if(printAllUniqueCycles){
-            System.out.println("\nAll unique cycles:");
-            for(ArrayList c:uniqueCycles){
-                System.out.printf("%s (pd=%d)\n",c.toString(),seedInfo.get(c.get(0)).get(0));
-            }
-            System.out.println();
-        }
     }
     
     public static int fnct(int n){
