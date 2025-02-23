@@ -45,8 +45,8 @@ class Main {
         int lastSeed = (int)Math.pow(10,seedLength)-1;
         
         // Containers
+        HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{tailLength, tipLength, isPeriodic}>, keySet() holds all previous elements, helps avoid unnecessary repeats
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
-        HashMap<Integer,ArrayList<Integer>> seedTailTip = new HashMap<>(); // <seed,{tailLength, tipLength, isPeriodic}>, keySet() holds all previous elements, helps avoid unnecessary repeats
         
         ArrayList<Integer> orbitHolder = new ArrayList<>(); // for each seed, holds orbit in order, helps calc (seed,tailL) pair quicker, reset empty per seed
         HashSet<Integer> cycleChecker = new HashSet<Integer>(); // for each seed, for quickly checking cycle, reset empty per seed
@@ -56,7 +56,7 @@ class Main {
 
         // For time efficiency: avoid iterating over ALL previously iterated elements
         int tempTail=0, tempIndex=0, tailMin=0; // works with tempSeed, tempIndex instead of ArrayList.indexOf() for time efficiency
-        boolean cycleCheckerFlag, seedTailFlag; // flags where the element was seen before, current orbit vs. previous orbit, affects tailLength calculations of same-cycle elements
+        boolean cycleCheckerFlag, seedFlag; // flags where the element was seen before, current orbit vs. previous orbit, affects tailLength calculations of same-cycle elements
         
         
         /* ALGORITHM */
@@ -69,15 +69,15 @@ class Main {
             j=i; tailLength=tempIndex=0;
             cycleChecker.clear();
             orbitHolder.clear();
-            cycleCheckerFlag=seedTailFlag=false;
+            cycleCheckerFlag=seedFlag=false;
             
             while(true){ // for each root, continues orbit calc until hits repeat in either current orbit or some previous orbit
 
                 // Only ONE of the following will be flagged in each new orbit
                 cycleCheckerFlag=cycleChecker.contains(j); // if current orbit has a brand new periodic point/cycle
-                seedTailFlag=seedTail.keySet().contains(j); // if we've calculated and stored this as a seed before, may or may NOT be a periodic point
+                seedFlag=seedInfo.keySet().contains(j); // if we've calculated and stored this as a seed before, may or may NOT be a periodic point
                 
-                if(!(cycleCheckerFlag||seedTailFlag)){ // if nothing is flagged
+                if(!(cycleCheckerFlag||seedFlag)){ // if nothing is flagged
                     
                     /*printTailOfEachSeed*/
                     if(printTailOfEachSeed) System.out.print(j+" ");
@@ -88,7 +88,7 @@ class Main {
                     // if cycleChecker is flagged (instead of seedTailFlag) that means its a NEW periodic point, thus every subsequent element has the same period/tailLength, and the tempTail of the element that flagged cycleChecker is the sharp lower bound for tailLengths of all elements in the current orbit
 
                     // if orbit was prematurely stopped before all unique elements were calculated, account for lost length for tailLength
-                    tailLength = cycleChecker.size() + (seedTailFlag)? seedTail.get(j):0;
+                    tailLength = cycleChecker.size() + (seedFlag)? seedInfo.get(j):0;
                     
                     /*printTailOfEachSeed*/
                     if(printTailOfEachSeed) System.out.print(j+"... ");
@@ -110,13 +110,13 @@ class Main {
                 System.out.println();
             }
             
-            // update tailSeed, seedTail, time efficient
+            // update tailSeed, seedInfo, time efficient
             // NOTE: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
             tailMin = (cycleCheckerFlag)? tailLength-orbitHolder.indexOf(j):0;
             for(int tempSeed:orbitHolder){
-                if(!seedTail.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
+                if(!seedInfo.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
                     tempTail = Math.max(tailLength-tempIndex,tailMin);
-                    seedTail.put(tempSeed,tempTail);
+                    seedInfo.put(tempSeed,tempTail);
                     if(!tailSeed.keySet().contains(tempTail)) tailSeed.put(tempTail,new TreeSet<>());
                     tailSeed.get(tempTail).add(tempSeed);
                 }
@@ -147,7 +147,7 @@ class Main {
         if(printAllTailLengths){
             System.out.println("All tail lengths in order:");
             for(int i=firstRoot;i<=lastRoot;i++){
-                System.out.print(seedTail.get(i)+" ");
+                System.out.print(seedInfo.get(i).get(1)+" ");
             }
         }
         
