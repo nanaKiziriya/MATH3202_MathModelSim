@@ -210,7 +210,7 @@ class MidSqTester {
         if(printAllTailLengths){
             System.out.print("Tail lengths in order:");
             for(int i=firstSeed;i<=lastSeed;i++){
-                if(i%printL==firstSeed) System.out.printf("\n(%d-%d) ",i,i+printL);
+                if(i%printL==firstSeed%printL) System.out.printf("\n(%d-%d) ",i,i+printL);
                 System.out.printf("%d ",seedInfo.get(i).get(1));
             }
             System.out.println();
@@ -229,7 +229,7 @@ class MidSqTester {
         if(printAllTipLengths){
             System.out.print("Tip lengths in order:");
             for(int i=firstSeed;i<=lastSeed;i++){
-                if(i%printL==firstSeed) System.out.printf("\n(%d-%d) ",i,i+printL);
+                if(i%printL==firstSeed%printL) System.out.printf("\n(%d-%d) ",i,i+printL);
                 System.out.printf("%d ",seedInfo.get(i).get(2));
             }
             System.out.println();
