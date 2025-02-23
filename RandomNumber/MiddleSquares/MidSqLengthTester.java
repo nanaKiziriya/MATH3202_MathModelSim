@@ -128,7 +128,7 @@ class Main {
             if(cycleCheckerFlag){
                 tipLength = tailLength-cycleHolder.size();
             } else{
-                tipLength = tailLength-1 + seedInfo.get(j).get(2);
+                tipLength = cycleChecker.size() + seedInfo.get(j).get(2);
             }
             
             // Note, tailMin: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
