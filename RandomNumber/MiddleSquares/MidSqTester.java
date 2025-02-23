@@ -84,7 +84,7 @@ class MidSqTester {
         System.out.printf("(Calculating orbits of all seeds from %d to %d...)\n",firstSeed,lastSeed);
 
         /*printOrbitInfoOfEachSeed, START*/
-        if(printOrbitInfoOfEachSeed) System.out.println("Tails of each seed:");
+        if(printOrbitInfoOfEachSeed) System.out.println("Printing orbit info of each seed (format: orbit [period,tail,tip])");
         
         for(int i=firstSeed,j; i<=lastSeed; i++){
             
@@ -224,9 +224,9 @@ class MidSqTester {
 
         /*printAllUniqueCycles, DONE*/
         if(printAllUniqueCycles){
-            System.out.println("All unique cycles:");
+            System.out.println("\nAll unique cycles:");
             for(ArrayList c:uniqueCycles){
-                System.out.printf("%s [pd=%d]\n",c.toString(),seedInfo.get(c.get(0)).get(0));
+                System.out.printf("%s (pd=%d)\n",c.toString(),seedInfo.get(c.get(0)).get(0));
             }
             System.out.println();
         }
