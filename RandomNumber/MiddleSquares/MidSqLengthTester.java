@@ -45,7 +45,7 @@ class Main {
         int lastSeed = (int)Math.pow(10,seedLength)-1;
         
         // Containers
-        HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{tailLength, tipLength, isPeriodic}>, keySet() holds all previous elements, helps avoid unnecessary repeats
+        HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{isPeriodic, tailLength, tipLength}>, keySet() holds all previous elements, helps avoid unnecessary repeats
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
         
         ArrayList<Integer> orbitHolder = new ArrayList<>(); // for each seed, holds orbit in order, helps calc (seed,tailL) pair quicker, reset empty per seed
@@ -112,11 +112,18 @@ class Main {
             
             // update tailSeed, seedInfo, time efficient
             // NOTE: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
+            // Note: int tempIndex = 0, here
             tailMin = (cycleCheckerFlag)? tailLength-orbitHolder.indexOf(j):0;
             for(int tempSeed:orbitHolder){
                 if(!seedInfo.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
+
+                    // isPeriodic: false if either seedFlag (last element accounted for already, and previous elements cannot be periodic)
+                    // or if (since cycleCheckerFlag already implied) element came strictly before j, the first periodic element in the orbit
+                    seedInfo.get(tempSeed).set(0,!(seedFlag||tempIndex<orbitHolder.indexOf(j)));
+                    
                     tempTail = Math.max(tailLength-tempIndex,tailMin);
-                    seedInfo.put(tempSeed,tempTail);
+                    seedInfo.get(tempSeed).set(1,tempTail);
+                    
                     if(!tailSeed.keySet().contains(tempTail)) tailSeed.put(tempTail,new TreeSet<>());
                     tailSeed.get(tempTail).add(tempSeed);
                 }
