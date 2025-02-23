@@ -109,7 +109,7 @@ class Main {
             /*printUniqueCycles, START/DONE*/
             if(printUniqueCycles){
                 if(cycleCheckerFlag){ // only if completely new orbit, i.e. cycleCheckerFlag true
-                    System.out.println("New cycle:");
+                    System.out.print("New cycle: ");
                     for(int k=orbitHolder.indexOf(j); k<orbitHolder.size(); k++){
                         System.out.print(orbitHolder.get(k)+" ");
                     }
