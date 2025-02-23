@@ -7,7 +7,7 @@ For each seed, it iterates through the orbit and calculates important info. Afte
 Terminology:
 seed - the initial value of a sequence
 tail - the longest acyclic sequence of the orbit
-tip - longest sequence before a periodic point is hit (shorter than tail)
+tip - longest sequence before a periodic point is hit (strictly shorter than tail)
 
 This program:
 Calculates the tail length of each seed
@@ -32,6 +32,8 @@ class Main {
     
     // USER INPUTS
         static int firstSeed=0, seedLength=3;
+        // Precursory:
+        static boolean printTerminology = true;
         // During/after each orbit:
         static boolean printOrbitInfoOfEachSeed = false;
         // At very end:
@@ -69,8 +71,16 @@ class Main {
         
         /* ALGORITHM */
 
+        if(printTerminology){
+            System.out.println("Terminology:");
+            System.out.println("seed - the initial value of a sequence");
+            System.out.println("tail - the longest acyclic sequence of the orbit");
+            System.out.println("tip - longest sequence before a periodic point is hit (strictly shorter than tail)");
+            System.out.println();
+        }
+
         // execute for each seed from firstSeed (user input) to lastSeed (999..9)
-        System.out.printf("Calculating orbits of all initial values from %d to %d.\n",firstSeed,lastSeed);
+        System.out.printf("Calculating orbits of all seeds from %d to %d.\n",firstSeed,lastSeed);
 
         /*printOrbitInfoOfEachSeed, START*/
         if(printOrbitInfoOfEachSeed) System.out.println("Tails of each seed:");
