@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.ArrayList;
 
-class MidSquTester {
+class MidSqTester {
     
     // USER INPUTS
         static int firstSeed=0, seedLength=3;
