@@ -32,6 +32,8 @@ class MidSquTester {
     
     // USER INPUTS
         static int firstSeed=0, seedLength=3;
+        static int lastSeed =
+            (int)Math.pow(10,seedLength)-1; // Automatically calculates largest seed of given length
         // Precursory Info:
         static boolean printTerminology = true;
         // During/after each orbit:
@@ -47,8 +49,6 @@ class MidSquTester {
     public static void main(String[] args) {
 
         /* DATAFIELDS */
-        
-        int lastSeed = (int)Math.pow(10,seedLength)-1;
         
         // Holds long-term info
         HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{period(-1 if not periodic), tailLength, tipLength}>, keySet() holds all previous elements, helps avoid unnecessary repeats
@@ -81,7 +81,7 @@ class MidSquTester {
         }
 
         // execute for each seed from firstSeed (user input) to lastSeed (999..9)
-        System.out.printf("Calculating orbits of all seeds from %d to %d.\n",firstSeed,lastSeed);
+        System.out.printf("(Calculating orbits of all seeds from %d to %d...)\n",firstSeed,lastSeed);
 
         /*printOrbitInfoOfEachSeed, START*/
         if(printOrbitInfoOfEachSeed) System.out.println("Tails of each seed:");
