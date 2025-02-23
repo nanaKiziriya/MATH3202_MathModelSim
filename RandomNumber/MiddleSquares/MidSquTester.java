@@ -32,7 +32,7 @@ class MidSquTester {
     
     // USER INPUTS
         static int firstSeed=0, seedLength=3;
-        // Precursory:
+        // Precursory Info:
         static boolean printTerminology = true;
         // During/after each orbit:
         static boolean printOrbitInfoOfEachSeed = false;
@@ -42,6 +42,7 @@ class MidSquTester {
         static boolean printMaxTipLength = true;
         static boolean printAllTipLengths = false;
         static boolean printAllUniqueCycles = true;
+    // END OF USER INPUTS
     
     public static void main(String[] args) {
 
