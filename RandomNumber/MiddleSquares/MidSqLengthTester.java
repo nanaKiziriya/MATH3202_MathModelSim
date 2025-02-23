@@ -147,11 +147,14 @@ class Main {
                     seedInfo.get(tempSeed).add(tempTail);
                     
                     // if not already accounted for, any elements at or after j are periodic, i.e. tipLength=0 (no iterations needed to get to a cycle)
-                    tempTip = ((tempIndex<flagIndex)? (flagIndex-tempIndex+((seedFlag)?seedInfo.get(j).get(2):0)) : 0);
+                    tempTip = Math.max(tipLength-tempIndex,0);
                     seedInfo.get(tempSeed).add(tempTip);
                     
                     if(!tailSeed.keySet().contains(tempTail)) tailSeed.put(tempTail,new TreeSet<>());
                     tailSeed.get(tempTail).add(tempSeed);
+
+                    if(!tipSeed.keySet().contains(tempTip)) tipSeed.put(tempTip,new TreeSet<>());
+                    tipSeed.get(tempTip).add(tempSeed);
                 }
                 tempIndex++;
             }
