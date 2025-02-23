@@ -38,7 +38,7 @@ class Main {
         static boolean printMaxTailLength = true;
         static boolean printAllTailLengths = false;
         static boolean printMaxTipLength = true;
-        static boolean printAllTipLengths = true;
+        static boolean printAllTipLengths = false;
         static boolean printAllUniqueCycles = true;
     
     public static void main(String[] args) {
@@ -58,7 +58,7 @@ class Main {
         // Reset for each orbit
         ArrayList<Integer> orbitHolder = new ArrayList<>(); // for each seed, holds orbit in order, helps calc (seed,tailL) pair quicker, reset empty per seed
         HashSet<Integer> cycleChecker = new HashSet<Integer>(); // for each seed, for quickly checking cycle, reset empty per seed
-        ArrayList<Integer> cycleHolder = new ArrayList<>(); // when collecting cycles in uniqueCycles, holds just the cycle
+        ArrayList<Integer> cycleHolder = new ArrayList<>(); // when collecting cycles in uniqueCycles, holds the current cycle
         
         int tailLength=0, tipLength=0; // for each seed, holds its tail,tip length
         
@@ -115,10 +115,12 @@ class Main {
             flagIndex = orbitHolder.indexOf(j);
 
             // updating cycleHolder if new cycle detected
-            if(cycleCheckerFlag){
+            if(cycleCheckerFlag){ // only if completely new orbit
                 // .subList() is synced with original list; avoids erasure when orbitHolder is cleared
                 cycleHolder = new ArrayList<>(orbitHolder.subList(flagIndex,orbitHolder.size()));
-                uniqueCycles.add(cycleHolder);
+
+                /*printAllUniqueCycles, START*/
+                if(printAllUniqueCycles) uniqueCycles.add(new ArrayList<>(cycleHolder)); // STORE cycle if you want to print later
             }
             
             // if orbit was prematurely stopped before all unique elements were calculated (seedFlag==true) account for lost length for tailLength
@@ -161,14 +163,6 @@ class Main {
 
             /*printOrbitInfoOfEachSeed, DONE*/
             if(printOrbitInfoOfEachSeed) System.out.println(seedInfo.get(i).toString());
-
-            /*printAllUniqueCycles, START*/
-            if(printAllUniqueCycles && cycleCheckerFlag){ // only if completely new orbit, i.e. cycleCheckerFlag true, STORE cycle
-                for(int k=orbitHolder.indexOf(j); k<orbitHolder.size(); k++){
-                    cycleHolder.add(orbitHolder.get(k));
-                }
-            }
-
             
             // update maxTailLength and maxTipLength
             if(maxTailLength<tailLength) maxTailLength=tailLength;
@@ -217,7 +211,7 @@ class Main {
             System.out.println();
         }
 
-        /*printAllUniqueCycles, START/DONE*/
+        /*printAllUniqueCycles, DONE*/
         if(printAllUniqueCycles){
             System.out.println("All unique cycles:");
             for(ArrayList c:uniqueCycles){
