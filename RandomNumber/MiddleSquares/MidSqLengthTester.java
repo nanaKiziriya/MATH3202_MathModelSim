@@ -16,7 +16,7 @@ Finds the longest tail length and its seeds
 Built-in functionality:
 Keeps track of seed & tailLength in both directions -> seedTail, tailSeed
 
-USER INPUTS starting at line ??:
+USER INPUTS starting at line 33:
 firstSeed - first seed value to calculate sequ of; program will continue to calculate until largest seed of given seedLength
 seedLength - controls length of the elements; Note: for middle-square, odd-lengths favor the left side of the middle
 printSequ, firstRoot - booleans to det. what info you want to calcluate/display
