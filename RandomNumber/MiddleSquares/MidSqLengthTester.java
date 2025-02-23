@@ -45,7 +45,7 @@ class Main {
         int lastSeed = (int)Math.pow(10,seedLength)-1;
         
         // Containers
-        HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{isPeriodic, tailLength, tipLength}>, keySet() holds all previous elements, helps avoid unnecessary repeats
+        HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{isPeriodic(0 or 1), tailLength, tipLength}>, keySet() holds all previous elements, helps avoid unnecessary repeats
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
         
         ArrayList<Integer> orbitHolder = new ArrayList<>(); // for each seed, holds orbit in order, helps calc (seed,tailL) pair quicker, reset empty per seed
@@ -55,7 +55,7 @@ class Main {
         int maxTailLength=0; // holds largest tail length
 
         // For time efficiency: avoid iterating over ALL previously iterated elements
-        int tempTail=0, tempIndex=0, tailMin=0; // works with tempSeed, tempIndex instead of ArrayList.indexOf() for time efficiency
+        int tempTail, tempIndex, tailMin, flagIndex; // works with tempSeed; tempIndex, flagIndex instead of ArrayList.indexOf() for time efficiency
         boolean cycleCheckerFlag, seedFlag; // flags where the element was seen before, current orbit vs. previous orbit, affects tailLength calculations of same-cycle elements
         
         
@@ -66,7 +66,7 @@ class Main {
         for(int i=firstSeed,j; i<=lastSeed; i++){
             
             // reset vals/prep for new seed orbit
-            j=i; tailLength=tempIndex=0;
+            j=i; tailLength=tempIndex=flagIndex=0;
             cycleChecker.clear();
             orbitHolder.clear();
             cycleCheckerFlag=seedFlag=false;
@@ -88,7 +88,7 @@ class Main {
                     // if cycleChecker is flagged (instead of seedTailFlag) that means its a NEW periodic point, thus every subsequent element has the same period/tailLength, and the tempTail of the element that flagged cycleChecker is the sharp lower bound for tailLengths of all elements in the current orbit
 
                     // if orbit was prematurely stopped before all unique elements were calculated, account for lost length for tailLength
-                    tailLength = cycleChecker.size() + (seedFlag)? seedInfo.get(j):0;
+                    tailLength = cycleChecker.size() + ((seedFlag)? seedInfo.get(j).get(1):0);
                     
                     /*printTailOfEachSeed*/
                     if(printTailOfEachSeed) System.out.print(j+"... ");
@@ -104,13 +104,13 @@ class Main {
 
             /*printUniqueCycles, DONE*/
             if(cycleCheckerFlag && printUniqueCycles){ // only if completely new orbit, i.e. cycleCheckerFlag true
-                for(int k=orbitHolder.indexOf(j); k<orbitHolder.length(); k++){
-                    System.out.print(orbitHolder.get(k);
+                for(int k=orbitHolder.indexOf(j); k<orbitHolder.size(); k++){
+                    System.out.print(orbitHolder.get(k));
                 }
                 System.out.println();
             }
             
-            // update tailSeed, seedInfo, time efficient
+            // update seedInfo, tailSeed; time not space efficient
             // NOTE: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
             // Note: int tempIndex = 0, here
             tailMin = (cycleCheckerFlag)? tailLength-orbitHolder.indexOf(j):0;
@@ -120,7 +120,7 @@ class Main {
 
                     // isPeriodic: false if either seedFlag (last element accounted for already, and previous elements cannot be periodic)
                     // or if (since cycleCheckerFlag already implied) element came strictly before j, the first periodic element in the orbit
-                    seedInfo.get(tempSeed).set(0,!(seedFlag||tempIndex<flagIndex));
+                    seedInfo.get(tempSeed).set(0,((seedFlag||tempIndex<flagIndex)?0:1));
                     
                     tempTail = Math.max(tailLength-tempIndex,tailMin);
                     // if not already accounted for, any elements at or after j are periodic, i.e. tipLength=0 (no iterations needed to get to a cycle)
