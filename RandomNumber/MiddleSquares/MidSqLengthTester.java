@@ -53,13 +53,14 @@ class Main {
         HashMap<Integer,TreeSet<Integer>> tipSeed = new HashMap<>(); // <tipLength,seedSet>
         ArrayList<ArrayList<Integer>> uniqueCycles =  new ArrayList<>(); // holds cycles, no repeats
         
+        int maxTailLength=0, maxTipLength=0; // holds largest tail,tip length
+        
         // Reset for each orbit
         ArrayList<Integer> orbitHolder = new ArrayList<>(); // for each seed, holds orbit in order, helps calc (seed,tailL) pair quicker, reset empty per seed
         HashSet<Integer> cycleChecker = new HashSet<Integer>(); // for each seed, for quickly checking cycle, reset empty per seed
         ArrayList<Integer> cycleHolder = new ArrayList<>(); // when collecting cycles in uniqueCycles, holds just the cycle
         
-        int tailLength=0; // for each seed, holds its tail length
-        int maxTailLength=0; // holds largest tail length
+        int tailLength=0, tipLength=0; // for each seed, holds its tail,tip length
         
         // For time efficiency: avoid iterating over ALL previously iterated elements
         int tempTail, tempTip, tempIndex, tailMin, flagIndex; // works with tempSeed; tempIndex, flagIndex instead of ArrayList.indexOf() for time efficiency
@@ -77,7 +78,7 @@ class Main {
         for(int i=firstSeed,j; i<=lastSeed; i++){
             
             // reset vals/prep for new seed orbit
-            j=i; tailLength=tempIndex=flagIndex=0;
+            j=i; tailLength=tipLength=tempIndex=flagIndex=0;
             cycleChecker.clear();
             orbitHolder.clear();
             cycleHolder.clear();
@@ -109,16 +110,25 @@ class Main {
             if(printOrbitInfoOfEachSeed) System.out.print(j+"... ");
             
             /* Update seedInfo, tailSeed, tipSeed; time-not space-efficient*/
-            
+
+            // if cycleCheckerFlag then ==start of complete cycle in orbit, else if seedFlag then ==lastElementPlace in incomplete orbit
             flagIndex = orbitHolder.indexOf(j);
+
+            // updating cycleHolder if new cycle detected
+            if(cycleCheckerFlag){
+                // .subList() is synced with original list; avoids erasure when orbitHolder is cleared
+                cycleHolder = new ArrayList<>(orbitHolder.subList(flagIndex,orbitHolder.size()));
+                uniqueCycles.add(cycleHolder);
+            }
             
             // if orbit was prematurely stopped before all unique elements were calculated (seedFlag==true) account for lost length for tailLength
             tailLength = cycleChecker.size() + ((seedFlag)? seedInfo.get(j).get(1):0);
-            
-            // updating cycleHolder if new cycle detected
+
+            // update tipLength
             if(cycleCheckerFlag){
-                cycleHolder = orbitHolder.subList(flagIndex,orbitHolder.size());
-                uniqueCycles.add(cycleHolder.clone()); // .subList() is synced with original list; avoid erasure when orbitHolder is cleared
+                tipLength = tailLength-cycleHolder.size();
+            } else{
+                tipLength = tailLength-1 + seedInfo.get(j).get(2);
             }
             
             // Note, tailMin: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
@@ -207,8 +217,8 @@ class Main {
         /*printAllUniqueCycles, START/DONE*/
         if(printAllUniqueCycles){
             System.out.println("All unique cycles:");
-            for(ArrayList<> c:uniqueCycles){
-                System.out.printf("%s [pd=%d]\n",c.toString(),seedInfo(c.get(0)).get(0));
+            for(ArrayList c:uniqueCycles){
+                System.out.printf("%s [pd=%d]\n",c.toString(),seedInfo.get(c.get(0)).get(0));
             }
             System.out.println();
         }
