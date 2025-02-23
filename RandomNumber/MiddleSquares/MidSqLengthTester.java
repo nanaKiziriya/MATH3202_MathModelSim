@@ -105,25 +105,33 @@ class Main {
             // if cycleChecker is flagged (instead of seedTailFlag) that means its a NEW periodic point, thus every subsequent element has the same period/tailLength...
             // ... and the tempTail of the element that flagged cycleChecker is the sharp lower bound for tailLengths of all elements in the current 
             
-            flagIndex = orbitHolder.indexOf(j);
-            
-            // if orbit was prematurely stopped before all unique elements were calculated, account for lost length for tailLength
-            tailLength = cycleChecker.size() + ((seedFlag)? seedInfo.get(j).get(1):0);
-            
             /*printOrbitInfoOfEachSeed*/
             if(printOrbitInfoOfEachSeed) System.out.print(j+"... ");
             
-            // update seedInfo, tailSeed, tipSeed; time-not space-efficient
+            /* Update seedInfo, tailSeed, tipSeed; time-not space-efficient*/
+            
+            flagIndex = orbitHolder.indexOf(j);
+            
+            // if orbit was prematurely stopped before all unique elements were calculated (seedFlag==true) account for lost length for tailLength
+            tailLength = cycleChecker.size() + ((seedFlag)? seedInfo.get(j).get(1):0);
+            
+            // updating cycleHolder if new cycle detected
+            if(cycleCheckerFlag){
+                cycleHolder = orbitHolder.subList(flagIndex,orbitHolder.size());
+                uniqueCycles.add(cycleHolder.clone()); // .subList() is synced with original list; avoid erasure when orbitHolder is cleared
+            }
+            
             // Note, tailMin: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
-            // Note: int tempIndex = 0, here
             tailMin = (cycleCheckerFlag)? tailLength-orbitHolder.indexOf(j):0;
+            
+            // Note: int tempIndex = 0, here
             for(int tempSeed:orbitHolder){
                 if(!seedInfo.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
 
                     seedInfo.put(tempSeed, new ArrayList<Integer>(3));
                     // Period: -1 if either seedFlag (last element accounted for already, and previous elements cannot be periodic), or...
                     // ... if (since cycleCheckerFlag already implied) element came strictly before j, the first periodic element in the orbit
-                    seedInfo.get(tempSeed).add(((seedFlag||tempIndex<flagIndex)?-1:));
+                    seedInfo.get(tempSeed).add(((seedFlag||tempIndex<flagIndex)?-1:cycleHolder.size()));
                     
                     tempTail = Math.max(tailLength-tempIndex,tailMin);
                     seedInfo.get(tempSeed).add(tempTail);
@@ -136,12 +144,6 @@ class Main {
                     tailSeed.get(tempTail).add(tempSeed);
                 }
                 tempIndex++;
-            }
-
-            //updating cycleHolder if new cycle detected
-            if(cycleCheckerFlag){
-                cycleHolder = orbitHolder.subList(flagIndex,orbitHolder.size());
-                uniqueCycles.add(cycleHolder.clone()); // .subList() is synced with original list
             }
 
             /*printOrbitInfoOfEachSeed, DONE*/
