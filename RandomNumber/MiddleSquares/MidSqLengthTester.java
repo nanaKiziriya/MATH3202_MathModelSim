@@ -48,7 +48,7 @@ class Main {
         int lastSeed = (int)Math.pow(10,seedLength)-1;
         
         // Holds long-term info
-        HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{isPeriodic(0 or 1), tailLength, tipLength}>, keySet() holds all previous elements, helps avoid unnecessary repeats
+        HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{period(-1 if not periodic), tailLength, tipLength}>, keySet() holds all previous elements, helps avoid unnecessary repeats
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
         HashMap<Integer,TreeSet<Integer>> tipSeed = new HashMap<>(); // <tipLength,seedSet>
         ArrayList<ArrayList<Integer>> uniqueCycles =  new ArrayList<>(); // holds cycles, no repeats
@@ -96,33 +96,34 @@ class Main {
                     
                     cycleChecker.add(j);
                     orbitHolder.add(j);
-                } else{ // something got flagged
-                    // if cycleChecker is flagged (instead of seedTailFlag) that means its a NEW periodic point, thus every subsequent element has the same period/tailLength, and the tempTail of the element that flagged cycleChecker is the sharp lower bound for tailLengths of all elements in the current orbit
-
-                    // if orbit was prematurely stopped before all unique elements were calculated, account for lost length for tailLength
-                    tailLength = cycleChecker.size() + ((seedFlag)? seedInfo.get(j).get(1):0);
-                    
-                    /*printOrbitInfoOfEachSeed*/
-                    if(printOrbitInfoOfEachSeed) System.out.print(j+"... ");
-
-                    break; // break this while loop, i.e. stop iterating on this orbit
-                }
+                } else {break;} // something got flagged; break this while loop, i.e. stop iterating on this orbit
+                
                 j=fnct(j);
             }
+            
             // while loop break guaranteed since a flag is guaranteed to be hit
+            // if cycleChecker is flagged (instead of seedTailFlag) that means its a NEW periodic point, thus every subsequent element has the same period/tailLength...
+            // ... and the tempTail of the element that flagged cycleChecker is the sharp lower bound for tailLengths of all elements in the current 
+            
+            flagIndex = orbitHolder.indexOf(j);
+            
+            // if orbit was prematurely stopped before all unique elements were calculated, account for lost length for tailLength
+            tailLength = cycleChecker.size() + ((seedFlag)? seedInfo.get(j).get(1):0);
+            
+            /*printOrbitInfoOfEachSeed*/
+            if(printOrbitInfoOfEachSeed) System.out.print(j+"... ");
             
             // update seedInfo, tailSeed, tipSeed; time-not space-efficient
-            // NOTE: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
+            // Note, tailMin: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
             // Note: int tempIndex = 0, here
             tailMin = (cycleCheckerFlag)? tailLength-orbitHolder.indexOf(j):0;
-            flagIndex = orbitHolder.indexOf(j);
             for(int tempSeed:orbitHolder){
                 if(!seedInfo.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
 
                     seedInfo.put(tempSeed, new ArrayList<Integer>(3));
-                    // isPeriodic: false if either seedFlag (last element accounted for already, and previous elements cannot be periodic)
-                    // or if (since cycleCheckerFlag already implied) element came strictly before j, the first periodic element in the orbit
-                    seedInfo.get(tempSeed).add(((seedFlag||tempIndex<flagIndex)?0:1));
+                    // Period: -1 if either seedFlag (last element accounted for already, and previous elements cannot be periodic), or...
+                    // ... if (since cycleCheckerFlag already implied) element came strictly before j, the first periodic element in the orbit
+                    seedInfo.get(tempSeed).add(((seedFlag||tempIndex<flagIndex)?-1:));
                     
                     tempTail = Math.max(tailLength-tempIndex,tailMin);
                     seedInfo.get(tempSeed).add(tempTail);
@@ -137,6 +138,12 @@ class Main {
                 tempIndex++;
             }
 
+            //updating cycleHolder if new cycle detected
+            if(cycleCheckerFlag){
+                cycleHolder = orbitHolder.subList(flagIndex,orbitHolder.size());
+                uniqueCycles.add(cycleHolder.clone()); // .subList() is synced with original list
+            }
+
             /*printOrbitInfoOfEachSeed, DONE*/
             if(printOrbitInfoOfEachSeed) System.out.println(seedInfo.get(i).toString());
 
@@ -148,16 +155,17 @@ class Main {
             }
 
             
-            // update maxTailLength
+            // update maxTailLength and maxTipLength
             if(maxTailLength<tailLength) maxTailLength=tailLength;
+            if(maxTipLength<tipLength) maxTipLength=tipLength;
             
             // RESTART for-loop again
         }
         
         // END OF ALL LOOPING
         
-        // Print final information
-        
+        // Print final information: Cycle,Tip,Tail Info
+
         /*printMaxTailLength, START/DONE*/
         if(printMaxTailLength){
             System.out.printf("Largest tail length is %d with seed(s): ",maxTailLength);
@@ -175,8 +183,33 @@ class Main {
             }
             System.out.println();
         }
+
+        /*printMaxTipLength, START/DONE*/
+        if(printMaxTipLength){
+            System.out.printf("Largest tip length is %d with seed(s): ",maxTipLength);
+            for(int n:tipSeed.get(maxTipLength)){
+                System.out.print(n+" ");
+            }
+            System.out.println();
+        }
         
-        
+        /*printAllTipLengths, START/DONE*/
+        if(printAllTipLengths){
+            System.out.println("All tip lengths in order:");
+            for(int i=firstSeed;i<=lastSeed;i++){
+                System.out.print(seedInfo.get(i).get(2)+" ");
+            }
+            System.out.println();
+        }
+
+        /*printAllUniqueCycles, START/DONE*/
+        if(printAllUniqueCycles){
+            System.out.println("All unique cycles:");
+            for(ArrayList<> c:uniqueCycles){
+                System.out.printf("%s [pd=%d]\n",c.toString(),seedInfo(c.get(0)).get(0));
+            }
+            System.out.println();
+        }
     }
     
     public static int fnct(int n){
