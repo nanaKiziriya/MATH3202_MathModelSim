@@ -33,8 +33,7 @@ class Main {
     // USER INPUTS
         static int firstSeed=0, seedLength=3;
         // During/after each orbit:
-        static boolean printTailOfEachSeed = false;
-        static boolean printNewCycles = true;
+        static boolean printOrbitInfoOfEachSeed = false;
         // At very end:
         static boolean printMaxTailLength = true;
         static boolean printAllTailLengths = false;
@@ -52,12 +51,12 @@ class Main {
         HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{isPeriodic(0 or 1), tailLength, tipLength}>, keySet() holds all previous elements, helps avoid unnecessary repeats
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
         HashMap<Integer,TreeSet<Integer>> tipSeed = new HashMap<>(); // <tipLength,seedSet>
-        ArrayList<ArrayList<Integer>> cycle =  new ArrayList<>();
+        ArrayList<ArrayList<Integer>> uniqueCycles =  new ArrayList<>(); // holds cycles, no repeats
         
         // Reset for each orbit
         ArrayList<Integer> orbitHolder = new ArrayList<>(); // for each seed, holds orbit in order, helps calc (seed,tailL) pair quicker, reset empty per seed
-        ArrayList<Integer> ccleHolder
         HashSet<Integer> cycleChecker = new HashSet<Integer>(); // for each seed, for quickly checking cycle, reset empty per seed
+        ArrayList<Integer> cycleHolder = new ArrayList<>(); // when collecting cycles in uniqueCycles, holds just the cycle
         
         int tailLength=0; // for each seed, holds its tail length
         int maxTailLength=0; // holds largest tail length
@@ -72,8 +71,8 @@ class Main {
         // execute for each seed from firstSeed (user input) to lastSeed (999..9)
         System.out.printf("Calculating orbits of all initial values from %d to %d.\n",firstSeed,lastSeed);
 
-        /*printTailOfEachSeed, START*/
-        if(printTailOfEachSeed) System.out.println("Tails of each seed:");
+        /*printOrbitInfoOfEachSeed, START*/
+        if(printOrbitInfoOfEachSeed) System.out.println("Tails of each seed:");
         
         for(int i=firstSeed,j; i<=lastSeed; i++){
             
@@ -81,6 +80,7 @@ class Main {
             j=i; tailLength=tempIndex=flagIndex=0;
             cycleChecker.clear();
             orbitHolder.clear();
+            cycleHolder.clear();
             cycleCheckerFlag=seedFlag=false;
             
             while(true){ // for each root, continues orbit calc until hits repeat in either current orbit or some previous orbit
@@ -91,8 +91,8 @@ class Main {
                 
                 if(!(cycleCheckerFlag||seedFlag)){ // if nothing is flagged
                     
-                    /*printTailOfEachSeed*/
-                    if(printTailOfEachSeed) System.out.print(j+" ");
+                    /*printOrbitInfoOfEachSeed*/
+                    if(printOrbitInfoOfEachSeed) System.out.print(j+" ");
                     
                     cycleChecker.add(j);
                     orbitHolder.add(j);
@@ -102,8 +102,8 @@ class Main {
                     // if orbit was prematurely stopped before all unique elements were calculated, account for lost length for tailLength
                     tailLength = cycleChecker.size() + ((seedFlag)? seedInfo.get(j).get(1):0);
                     
-                    /*printTailOfEachSeed*/
-                    if(printTailOfEachSeed) System.out.print(j+"... ");
+                    /*printOrbitInfoOfEachSeed*/
+                    if(printOrbitInfoOfEachSeed) System.out.print(j+"... ");
 
                     break; // break this while loop, i.e. stop iterating on this orbit
                 }
@@ -111,21 +111,7 @@ class Main {
             }
             // while loop break guaranteed since a flag is guaranteed to be hit
             
-            /*printTailOfEachSeed, DONE*/
-            if(printTailOfEachSeed) System.out.println("["+tailLength+"]");
-
-            /*printUniqueCycles, START/DONE*/
-            if(printNewCycles){
-                if(cycleCheckerFlag){ // only if completely new orbit, i.e. cycleCheckerFlag true
-                    System.out.print("New cycle: ");
-                    for(int k=orbitHolder.indexOf(j); k<orbitHolder.size(); k++){
-                        System.out.print(orbitHolder.get(k)+" ");
-                    }
-                    System.out.println();
-                }
-            }
-            
-            // update seedInfo, tailSeed; time, not space, efficient
+            // update seedInfo, tailSeed, tipSeed; time-not space-efficient
             // NOTE: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
             // Note: int tempIndex = 0, here
             tailMin = (cycleCheckerFlag)? tailLength-orbitHolder.indexOf(j):0;
@@ -150,6 +136,17 @@ class Main {
                 }
                 tempIndex++;
             }
+
+            /*printOrbitInfoOfEachSeed, DONE*/
+            if(printOrbitInfoOfEachSeed) System.out.println(seedInfo.get(i).toString());
+
+            /*printAllUniqueCycles, START*/
+            if(printAllUniqueCycles && cycleCheckerFlag){ // only if completely new orbit, i.e. cycleCheckerFlag true, STORE cycle
+                for(int k=orbitHolder.indexOf(j); k<orbitHolder.size(); k++){
+                    cycleHolder.add(orbitHolder.get(k));
+                }
+            }
+
             
             // update maxTailLength
             if(maxTailLength<tailLength) maxTailLength=tailLength;
