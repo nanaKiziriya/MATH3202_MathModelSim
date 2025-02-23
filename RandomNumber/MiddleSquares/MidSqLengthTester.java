@@ -31,12 +31,16 @@ import java.util.ArrayList;
 class Main {
     
     // USER INPUTS
-    static int firstSeed=0, seedLength=3;
-    static boolean printTailOfEachSeed = false; // during each loop
-    static boolean printUniqueCycles = true; // after each loop
-    static boolean printMaxTailLength = false; // at very end
-    static boolean printAllTailLengths = false; // at very end
-    static boolean printAllTipLengths = true; // at very end
+        static int firstSeed=0, seedLength=3;
+        // During/after each orbit:
+        static boolean printTailOfEachSeed = false;
+        static boolean printNewCycles = true;
+        // At very end:
+        static boolean printMaxTailLength = true;
+        static boolean printAllTailLengths = false;
+        static boolean printMaxTipLength = true;
+        static boolean printAllTipLengths = true;
+        static boolean printAllUniqueCycles = true;
     
     public static void main(String[] args) {
 
@@ -44,16 +48,20 @@ class Main {
         
         int lastSeed = (int)Math.pow(10,seedLength)-1;
         
-        // Containers
+        // Holds long-term info
         HashMap<Integer,ArrayList<Integer>> seedInfo = new HashMap<>(); // <seed,{isPeriodic(0 or 1), tailLength, tipLength}>, keySet() holds all previous elements, helps avoid unnecessary repeats
         HashMap<Integer,TreeSet<Integer>> tailSeed = new HashMap<>(); // <tailLength,seedSet>
+        HashMap<Integer,TreeSet<Integer>> tipSeed = new HashMap<>(); // <tipLength,seedSet>
+        ArrayList<ArrayList<Integer>> cycle =  new ArrayList<>();
         
+        // Reset for each orbit
         ArrayList<Integer> orbitHolder = new ArrayList<>(); // for each seed, holds orbit in order, helps calc (seed,tailL) pair quicker, reset empty per seed
+        ArrayList<Integer> ccleHolder
         HashSet<Integer> cycleChecker = new HashSet<Integer>(); // for each seed, for quickly checking cycle, reset empty per seed
-
+        
         int tailLength=0; // for each seed, holds its tail length
         int maxTailLength=0; // holds largest tail length
-
+        
         // For time efficiency: avoid iterating over ALL previously iterated elements
         int tempTail, tempTip, tempIndex, tailMin, flagIndex; // works with tempSeed; tempIndex, flagIndex instead of ArrayList.indexOf() for time efficiency
         boolean cycleCheckerFlag, seedFlag; // flags where the element was seen before, current orbit vs. previous orbit, affects tailLength calculations of same-cycle elements
@@ -107,7 +115,7 @@ class Main {
             if(printTailOfEachSeed) System.out.println("["+tailLength+"]");
 
             /*printUniqueCycles, START/DONE*/
-            if(printUniqueCycles){
+            if(printNewCycles){
                 if(cycleCheckerFlag){ // only if completely new orbit, i.e. cycleCheckerFlag true
                     System.out.print("New cycle: ");
                     for(int k=orbitHolder.indexOf(j); k<orbitHolder.size(); k++){
@@ -155,8 +163,7 @@ class Main {
         
         /*printMaxTailLength, START/DONE*/
         if(printMaxTailLength){
-            System.out.println("Largest tail length is "+maxTailLength);
-            System.out.println("With seed(s): ");
+            System.out.printf("Largest tail length is %d with seed(s): ",maxTailLength);
             for(int n:tailSeed.get(maxTailLength)){
                 System.out.print(n+" ");
             }
