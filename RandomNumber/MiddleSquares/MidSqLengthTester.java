@@ -55,7 +55,7 @@ class Main {
         int maxTailLength=0; // holds largest tail length
 
         // For time efficiency: avoid iterating over ALL previously iterated elements
-        int tempTail, tempIndex, tailMin, flagIndex; // works with tempSeed; tempIndex, flagIndex instead of ArrayList.indexOf() for time efficiency
+        int tempTail, tempTip, tempIndex, tailMin, flagIndex; // works with tempSeed; tempIndex, flagIndex instead of ArrayList.indexOf() for time efficiency
         boolean cycleCheckerFlag, seedFlag; // flags where the element was seen before, current orbit vs. previous orbit, affects tailLength calculations of same-cycle elements
         
         
@@ -118,15 +118,16 @@ class Main {
             for(int tempSeed:orbitHolder){
                 if(!seedInfo.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
 
+                    seedInfo.put(tempSeed, new ArrayList<>());
                     // isPeriodic: false if either seedFlag (last element accounted for already, and previous elements cannot be periodic)
                     // or if (since cycleCheckerFlag already implied) element came strictly before j, the first periodic element in the orbit
                     seedInfo.get(tempSeed).set(0,((seedFlag||tempIndex<flagIndex)?0:1));
                     
                     tempTail = Math.max(tailLength-tempIndex,tailMin);
-                    // if not already accounted for, any elements at or after j are periodic, i.e. tipLength=0 (no iterations needed to get to a cycle)
-                    tempTip = (tempIndex<flagIndex)? (flagIndex-tempIndex+(seedFlag)?seedInfo.get(j).get(2):0) : 0;
-                    
                     seedInfo.get(tempSeed).set(1,tempTail);
+                    
+                    // if not already accounted for, any elements at or after j are periodic, i.e. tipLength=0 (no iterations needed to get to a cycle)
+                    tempTip = ((tempIndex<flagIndex)? (flagIndex-tempIndex+((seedFlag)?seedInfo.get(j).get(2):0)) : 0);
                     seedInfo.get(tempSeed).set(2,tempTip);
                     
                     if(!tailSeed.keySet().contains(tempTail)) tailSeed.put(tempTail,new TreeSet<>());
@@ -158,7 +159,7 @@ class Main {
         /*printAllTailLengths, DONE*/
         if(printAllTailLengths){
             System.out.println("All tail lengths in order:");
-            for(int i=firstRoot;i<=lastRoot;i++){
+            for(int i=firstSeed;i<=lastSeed;i++){
                 System.out.print(seedInfo.get(i).get(1)+" ");
             }
         }
