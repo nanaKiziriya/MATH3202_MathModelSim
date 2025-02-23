@@ -118,7 +118,7 @@ class Main {
             for(int tempSeed:orbitHolder){
                 if(!seedInfo.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
 
-                    seedInfo.put(tempSeed, new ArrayList<>());
+                    seedInfo.put(tempSeed, new ArrayList<>(3));
                     // isPeriodic: false if either seedFlag (last element accounted for already, and previous elements cannot be periodic)
                     // or if (since cycleCheckerFlag already implied) element came strictly before j, the first periodic element in the orbit
                     seedInfo.get(tempSeed).set(0,((seedFlag||tempIndex<flagIndex)?0:1));
