@@ -34,7 +34,7 @@ class Main {
     static int firstSeed=0, seedLength=3;
     static boolean printTailOfEachSeed = false; // during each loop
     static boolean printUniqueCycles = true; // after each loop
-    static boolean printSeedsOfMaxTailLength = false; // at very end
+    static boolean printMaxTailLength = false; // at very end
     static boolean printAllTailLengths = false; // at very end
     static boolean printAllTipLengths = true; // at very end
     
@@ -63,6 +63,10 @@ class Main {
 
         // execute for each seed from firstSeed (user input) to lastSeed (999..9)
         System.out.printf("Calculating orbits of all initial values from %d to %d.\n",firstSeed,lastSeed);
+
+        /*printTailOfEachSeed, START*/
+        if(printTailOfEachSeed) System.out.println("Tails of each seed:");
+        
         for(int i=firstSeed,j; i<=lastSeed; i++){
             
             // reset vals/prep for new seed orbit
@@ -102,15 +106,18 @@ class Main {
             /*printTailOfEachSeed, DONE*/
             if(printTailOfEachSeed) System.out.println("["+tailLength+"]");
 
-            /*printUniqueCycles, DONE*/
-            if(cycleCheckerFlag && printUniqueCycles){ // only if completely new orbit, i.e. cycleCheckerFlag true
-                for(int k=orbitHolder.indexOf(j); k<orbitHolder.size(); k++){
-                    System.out.print(orbitHolder.get(k));
+            /*printUniqueCycles, START/DONE*/
+            if(printUniqueCycles){
+                System.out.println("Unique cycles:");
+                if(cycleCheckerFlag){ // only if completely new orbit, i.e. cycleCheckerFlag true
+                    for(int k=orbitHolder.indexOf(j); k<orbitHolder.size(); k++){
+                        System.out.print(orbitHolder.get(k)+" ");
+                    }
+                    System.out.println();
                 }
-                System.out.println();
             }
             
-            // update seedInfo, tailSeed; time not space efficient
+            // update seedInfo, tailSeed; time, not space, efficient
             // NOTE: If a non-fixed periodic point is hit (flagged cycleChecker in loop) every subsequent element has the exact same period/tailLength
             // Note: int tempIndex = 0, here
             tailMin = (cycleCheckerFlag)? tailLength-orbitHolder.indexOf(j):0;
@@ -118,17 +125,17 @@ class Main {
             for(int tempSeed:orbitHolder){
                 if(!seedInfo.keySet().contains(tempSeed)){ // if this seed hasn't been calculated and stored b4
 
-                    seedInfo.put(tempSeed, new ArrayList<>(3));
+                    seedInfo.put(tempSeed, new ArrayList<Integer>(3));
                     // isPeriodic: false if either seedFlag (last element accounted for already, and previous elements cannot be periodic)
                     // or if (since cycleCheckerFlag already implied) element came strictly before j, the first periodic element in the orbit
-                    seedInfo.get(tempSeed).set(0,((seedFlag||tempIndex<flagIndex)?0:1));
+                    seedInfo.get(tempSeed).add(((seedFlag||tempIndex<flagIndex)?0:1));
                     
                     tempTail = Math.max(tailLength-tempIndex,tailMin);
-                    seedInfo.get(tempSeed).set(1,tempTail);
+                    seedInfo.get(tempSeed).add(tempTail);
                     
                     // if not already accounted for, any elements at or after j are periodic, i.e. tipLength=0 (no iterations needed to get to a cycle)
                     tempTip = ((tempIndex<flagIndex)? (flagIndex-tempIndex+((seedFlag)?seedInfo.get(j).get(2):0)) : 0);
-                    seedInfo.get(tempSeed).set(2,tempTip);
+                    seedInfo.get(tempSeed).add(tempTip);
                     
                     if(!tailSeed.keySet().contains(tempTail)) tailSeed.put(tempTail,new TreeSet<>());
                     tailSeed.get(tempTail).add(tempSeed);
@@ -145,10 +152,10 @@ class Main {
         // END OF ALL LOOPING
         
         // Print final information
-        System.out.println("Largest tail length is "+maxTailLength);
         
-        /*printSeedsOfMaxTailLength*/
-        if(printSeedsOfMaxTailLength){
+        /*printMaxTailLength, START/DONE*/
+        if(printMaxTailLength){
+            System.out.println("Largest tail length is "+maxTailLength);
             System.out.println("With seed(s): ");
             for(int n:tailSeed.get(maxTailLength)){
                 System.out.print(n+" ");
@@ -156,12 +163,13 @@ class Main {
             System.out.println();
         }
         
-        /*printAllTailLengths, DONE*/
+        /*printAllTailLengths, START/DONE*/
         if(printAllTailLengths){
             System.out.println("All tail lengths in order:");
             for(int i=firstSeed;i<=lastSeed;i++){
                 System.out.print(seedInfo.get(i).get(1)+" ");
             }
+            System.out.println();
         }
         
         
