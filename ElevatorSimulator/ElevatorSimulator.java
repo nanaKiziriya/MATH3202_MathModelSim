@@ -14,7 +14,7 @@ class ElevatorSimulator {
         EDT = 20, /*Elevator departure timer, reset at new entry INTO elevator*/
         ERI = 180, /*Elevator return interval*/
         capacity = 8, /*max Elevator capacity*/
-        runtime = Integer.MAX_VALUE/ERI*PAI; /*simulation runtime, max Integer.MAX_VALUE/ERI; avoid overflow sumWaitTime < rt*ERI/PAI/2 < INT.MAX*/
+        runtime = 1000; /*simulation runtime, max Integer.MAX_VALUE/ERI; avoid overflow sumWaitTime < rt*ERI/PAI/2 < INT.MAX*/
 
     // elevator datafields
     private static int time=0, eCountdown=EDT;
@@ -31,14 +31,14 @@ class ElevatorSimulator {
             // elevator arrives
             eCountdown=EDT;
             
-            while(eCountdown>0){ // waiting for elevator to leave
+            while(eCountdown>0 && time<runtime){ // waiting for elevator to leave
                 tick(true); // updates elevator datafields; if new person arrives at 0 and not at capacity, eCountdown restarts
             }
 
             // elevator finally departs
             departureStats(); // updates statistics datafields, then shortens queue accordingly
 
-            for(int i=0; i<ERI; i++){ // waiting for elevator to return
+            for(int i=0; i<ERI && time<runtime; i++){ // waiting for elevator to return
                 tick(false); // updates elevator datafields EXCEPT eCountdown
             }
         }
@@ -57,6 +57,9 @@ class ElevatorSimulator {
             queue.add(new Passenger()); // new person arrives every PAI minutes
             if(elevatorIsPresent && queue.size()<capacity) eCountdown=EDT; // if new person has space to enter elevator
         }
+        
+        //printCurrent(); // for testing
+        
     }
     
     private static void waiting(){ for(Passenger p:queue) p.incrWaitTime(); }
@@ -77,13 +80,17 @@ class ElevatorSimulator {
         System.out.println("Elevator Max Capacity: "+capacity);
         System.out.println("Elevator Departure Timer: "+EDT);
         System.out.println("Elevator Return Interval: "+ERI);
-        System.out.println("Simulation Runtime: "+runtime+" mins\n");
+        System.out.println("Simulation Runtime: "+runtime+" sec\n");
     }
     
     private static void printStats(){
         System.out.println("STATISTICS");
         System.out.println("Max Wait Time: "+maxWaitTime);
         System.out.println("Avg Wait Time: "+(double)sumWaitTime/totalDeparted);
+    }
+    
+    private static void printCurrent(){
+        System.out.println(queue.size()+" @"+time);
     }
     
 }
