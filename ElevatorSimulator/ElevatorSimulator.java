@@ -10,14 +10,15 @@ import java.util.ArrayDeque;
 class ElevatorSimulator {
     
     // initial conditions
-    final static int PAI = 25, /* Passenger arrival interval*/
+    final static int PAP = 25, /* Passenger arrival parameter, for exponential dist*/
         EDT = 20, /*Elevator departure timer, reset at new entry INTO elevator*/
         ERI = 180, /*Elevator return interval*/
         capacity = 8, /*max Elevator capacity*/
         runtime = 1000; /*simulation runtime, max Integer.MAX_VALUE/ERI; avoid overflow sumWaitTime < rt*ERI/PAI/2 < INT.MAX*/
 
     // elevator datafields
-    private static int time=0, eCountdown=EDT;
+    private static int time=0, eCountdown=EDT
+    private static double nextArrivalTime=0;
     private static ArrayDeque<Passenger> queue = new ArrayDeque<>();
 
     // statistics datafields
@@ -53,13 +54,17 @@ class ElevatorSimulator {
         time++;
         waiting(); // waittime for ppl present goes up
         if(elevatorIsPresent && queue.size()>0) eCountdown--; // timer to leave is ticking
-        if(time%PAI==0){
+        if(time>=nextArrivalTime){
             queue.add(new Passenger()); // new person arrives every PAI minutes
             if(elevatorIsPresent && queue.size()<capacity) eCountdown=EDT; // if new person has space to enter elevator
+            nextArrivalTime+=rExp();
         }
         
         //printCurrent(); // for testing
-        
+    }
+
+    private static double rExp(){
+        return -1/PAP*Math.log(1-Math.random());
     }
     
     private static void waiting(){ for(Passenger p:queue) p.incrWaitTime(); }
@@ -76,7 +81,7 @@ class ElevatorSimulator {
 
     private static void printInitialConditions(){
         System.out.println("INITIAL CONDITIONS");
-        System.out.println("Passenger Arrival Interval: "+PAI);
+        System.out.println("Passenger Arrival ~exponential("+PAI+")");
         System.out.println("Elevator Max Capacity: "+capacity);
         System.out.println("Elevator Departure Timer: "+EDT);
         System.out.println("Elevator Return Interval: "+ERI);
