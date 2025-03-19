@@ -81,17 +81,17 @@ class ElevatorSimulator {
 
     private static void printInitialConditions(){
         System.out.println("INITIAL CONDITIONS");
-        System.out.println("Passenger Arrival ~exponential(1/"+PAM+")");
+        System.out.println("Passenger Arrival Time Mean: "+PAM+" sec");
         System.out.println("Elevator Max Capacity: "+capacity);
-        System.out.println("Elevator Departure Timer: "+EDT);
-        System.out.println("Elevator Return Interval: "+ERI);
+        System.out.println("Elevator Departure Timer: "+EDT+" sec");
+        System.out.println("Elevator Return Interval: "+ERI+" sec");
         System.out.println("Simulation Runtime: "+runtime+" sec\n");
     }
     
     private static void printStats(){
         System.out.println("STATISTICS");
-        System.out.println("Max Wait Time: "+maxWaitTime);
-        System.out.println("Avg Wait Time: "+(double)sumWaitTime/totalDeparted);
+        System.out.println("Max Wait Time: "+maxWaitTime+" sec");
+        System.out.println("Avg Wait Time: "+(double)sumWaitTime/totalDeparted+" sec");
     }
     
     private static void printCurrent(){
