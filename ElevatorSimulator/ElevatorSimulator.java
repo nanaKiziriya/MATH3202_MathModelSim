@@ -10,14 +10,14 @@ import java.util.ArrayDeque;
 class ElevatorSimulator {
     
     // initial conditions
-    final static int PAP = 25, /* Passenger arrival parameter, for exponential dist*/
+    final static int PAM = 25, /* Passenger arrival mean, for exponential dist*/
         EDT = 20, /*Elevator departure timer, reset at new entry INTO elevator*/
         ERI = 180, /*Elevator return interval*/
         capacity = 8, /*max Elevator capacity*/
         runtime = 1000; /*simulation runtime, max Integer.MAX_VALUE/ERI; avoid overflow sumWaitTime < rt*ERI/PAI/2 < INT.MAX*/
 
     // elevator datafields
-    private static int time=0, eCountdown=EDT
+    private static int time=0, eCountdown=EDT;
     private static double nextArrivalTime=0;
     private static ArrayDeque<Passenger> queue = new ArrayDeque<>();
 
@@ -64,7 +64,7 @@ class ElevatorSimulator {
     }
 
     private static double rExp(){
-        return -1/PAP*Math.log(1-Math.random());
+        return -PAM*Math.log(1-Math.random());
     }
     
     private static void waiting(){ for(Passenger p:queue) p.incrWaitTime(); }
@@ -81,7 +81,7 @@ class ElevatorSimulator {
 
     private static void printInitialConditions(){
         System.out.println("INITIAL CONDITIONS");
-        System.out.println("Passenger Arrival ~exponential("+PAI+")");
+        System.out.println("Passenger Arrival ~exponential(1/"+PAM+")");
         System.out.println("Elevator Max Capacity: "+capacity);
         System.out.println("Elevator Departure Timer: "+EDT);
         System.out.println("Elevator Return Interval: "+ERI);
