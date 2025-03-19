@@ -23,25 +23,32 @@ class ElevatorSimulator {
     // statistics datafields
     private static int maxWaitTime=0, sumWaitTime=0, totalDeparted=0;
 
+
+    
     public static void main(String[] args) {
         while(time<runtime){ // 1 loop ~ 1 elevator arrival/departure cycle
             
             // elevator arrives
             eCountdown=EDT;
             
-            while(eCountdown>0){
-                // waiting for elevator to leave
+            while(eCountdown>0){ // waiting for elevator to leave
                 tick(true); // updates elevator datafields; if new person arrives at 0 and not at capacity, eCountdown restarts
             }
 
             // elevator finally departs
             departureStats(); // updates statistics datafields, then shortens queue accordingly
 
-            // waiting for elevator to return
-            tick(false); // updates elevator datafields EXCEPT eCountdown
+            for(int i=0; i<ERI; i++){ // waiting for elevator to return
+                tick(false); // updates elevator datafields EXCEPT eCountdown
+            }
         }
+        
+        printInitialConditions();
+        printStats();
     }
 
+
+    
     private static void tick(boolean elevatorIsPresent){ // one minute passes in the lobby
         time++;
         waiting(); // waittime for ppl present goes up
@@ -62,6 +69,21 @@ class ElevatorSimulator {
             maxWaitTime = Math.max(maxWaitTime,inspectWaitTime);
             sumWaitTime+=inspectWaitTime;   
         }
+    }
+
+    private static void printInitialConditions(){
+        System.out.println("INITIAL CONDITIONS");
+        System.out.println("Passenger Arrival Interval: "+PAI);
+        System.out.println("Elevator Max Capacity: "+capacity);
+        System.out.println("Elevator Departure Timer: "+EDT);
+        System.out.println("Elevator Return Interval: "+ERI);
+        System.out.println("Simulation Runtime: "+runtime+" mins\n");
+    }
+    
+    private static void printStats(){
+        System.out.println("STATISTICS");
+        System.out.println("Max Wait Time: "+maxWaitTime);
+        System.out.println("Avg Wait Time: "+(double)sumWaitTime/totalDeparted);
     }
     
 }
