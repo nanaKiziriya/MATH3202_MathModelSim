@@ -1,3 +1,5 @@
+import java.util.ArrayDeque;
+
 // Given passenger arrival interval 25, elevator departure timer 20, elevator return interval 180, elevator max capacity 8
 // Calculate max & avg wait time
 // How sensitive is the model to change in passenger arrival rate? e.g. 25->24
@@ -16,7 +18,7 @@ class ElevatorSimulator {
 
     // elevator datafields
     private static int time=0, eCountdown=EDT;
-    private static Queue<Passenger> queue = new Queue<>();
+    private static ArrayDeque<Passenger> queue = new ArrayDeque<>();
 
     // statistics datafields
     private static int maxWaitTime=0, sumWaitTime=0, totalDeparted=0;
@@ -53,7 +55,7 @@ class ElevatorSimulator {
     private static void waiting(){ for(Passenger p:queue) p.incrWaitTime(); }
 
     private static void departureStats(){
-        int numDeparted = min(queue.size(),capacity), inspectWaitTime;
+        int inspectWaitTime, numDeparted = Math.min(queue.size(),capacity);
         for(int i=0;i<numDeparted;i++){
             inspectWaitTime = queue.remove().getWaitTime();
             totalDeparted++;
